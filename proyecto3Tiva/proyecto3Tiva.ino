@@ -50,7 +50,6 @@ extern uint8_t roto[];
 #define TXp2 PD7
 //Variables para las melodias del buzzer
 const int guardar = PUSH2; //Pin del boton 2
-const int BUZZER = 40; //Pin del buzzer
 File myFile; //Variable para la micro SD
 const int medir = PUSH1; //Pin del boton 1
 int latido; //Variable para guardar el dato
@@ -78,7 +77,6 @@ void setup() {
   //Se declaran las salidas y entradas
   pinMode(guardar, INPUT_PULLUP);
   pinMode(medir, INPUT_PULLUP);
-  pinMode(BUZZER, OUTPUT);
   //Configuracion de la pantalla TFT
   LCD_Init();
   LCD_Clear(0xffff);
@@ -87,7 +85,7 @@ void setup() {
   String text1 = "Proyecto Digital 2";
   LCD_Print(text1, 10, 10, 2, 0xffff, 0x00);
 
-  String text2 = "Sensor cardiaco";
+  String text2 = "Sensor de temperatura";
   LCD_Print(text2, 10, 40, 2, 0x00ff, 0x0f0f);
   delay(5000);
 }
