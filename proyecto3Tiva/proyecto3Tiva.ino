@@ -49,10 +49,6 @@ extern uint8_t roto[];
 #define RXp2 PD6 //Pines para la comunicacion entre esp32 y Tiva C
 #define TXp2 PD7
 //Variables para las melodias del buzzer
-int melodia[] = {262, 196, 196, 220, 196, 0, 247, 262}; //Frecuencia de notas para melodia 1
-int duracionNotas[] = {4, 8, 8, 4, 4, 4, 4, 4}; //Duracion de las notas de la melodia 1
-int gan_melody[] = {330, 392, 330, 392, 0, 392, 440, 440}; //Frecuencia de notas para melodia 2
-int duraciones[] = {8, 8, 4, 4, 4, 4, 4, 4}; //Duracion de las notas de la melodia 2
 const int guardar = PUSH2; //Pin del boton 2
 const int BUZZER = 40; //Pin del buzzer
 File myFile; //Variable para la micro SD
@@ -120,20 +116,6 @@ void loop() {
         }
         text3 += String(latido); //Se añade el dato al texto que anteriormente se declaro
         LCD_Print(text3, 120, 130, 2, 0x00ff, 0x0f0f);
-        if (latido > 59){
-          LCD_Bitmap(30, 110, 64, 65, fondo); //Muestra diferentes imagenes dependiendo del latido
-        }
-        else{
-          LCD_Bitmap(30, 110, 70, 57, roto);
-        }
-        //Melodia para que indique que si se leyo el dato
-        for(int i = 0; i < 8; i++){
-          int duracionNota = 1000/duracionNotas[i];
-          tone(BUZZER, melodia[i],duracionNota);
-          int pausaEntreNotas = duracionNota * 1.30;
-          delay(pausaEntreNotas);
-          noTone(BUZZER);
-        }
       }
     }
   }
@@ -147,14 +129,6 @@ void loop() {
       myFile.println(latido);
       myFile.close(); //Se cierra el documento
       Serial.println("Dato recibido");
-      //Melodia para que indique que se guardo el dato de manera correcta
-      for(int i = 0; i < 8; i++){
-        int duracion = 1000/duraciones[i];
-        tone(BUZZER, gan_melody[i],duracion);
-        int pausaNotas = duracion * 1.30;
-        delay(pausaNotas);
-        noTone(BUZZER);
-      }
     }
     else{
       //Muestra este mensaje si no se abrio el archivo de manera correcta
