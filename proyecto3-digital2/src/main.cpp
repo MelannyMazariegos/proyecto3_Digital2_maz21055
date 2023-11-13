@@ -2,8 +2,6 @@
 #include <Wire.h>
 
 #define LM75_ADDRESS 0x4C
-#define SDA_PIN 21
-#define SCL_PIN 22
 
 void calcular(void);
 float temperatura;
@@ -11,11 +9,11 @@ float temperatura;
 void setup() {
   Serial.begin(115200);
   Serial2.begin(115200);
-  Wire.begin(SDA_PIN, SCL_PIN);
+  Wire.begin();
 }
 
 void loop() {
-  if (Serial2.available()){
+   if (Serial2.available()){
     int com = Serial2.read();
     if (com == 'm'){
       calcular();

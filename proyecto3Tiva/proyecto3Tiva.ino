@@ -45,10 +45,8 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
 void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
 void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
 extern uint8_t fondo[];
-extern uint8_t roto[];
 #define RXp2 PD6 //Pines para la comunicacion entre esp32 y Tiva C
 #define TXp2 PD7
-//Variables para las melodias del buzzer
 const int guardar = PUSH2; //Pin del boton 2
 File myFile; //Variable para la micro SD
 const int medir = PUSH1; //Pin del boton 1
@@ -66,12 +64,12 @@ void setup() {
   //Se declara el modulo para la SPI
   SPI.setModule(0);
   //Se inicializa la micro SD
-  Serial.print("Initializing SD card...");
-  if (!SD.begin(38)) {
+//  Serial.print("Initializing SD card...");
+//  if (!SD.begin(38)) {
     //Si falla se muestra este mensaje
-    Serial.println("initialization failed!");
-    return;
-  }
+//    Serial.println("initialization failed!");
+//    return;
+//  }
   //Si es exitosa se muestra este mensaje
   Serial.println("initialization done.");
   //Se declaran las salidas y entradas
@@ -80,13 +78,13 @@ void setup() {
   //Configuracion de la pantalla TFT
   LCD_Init();
   LCD_Clear(0xffff);
-  FillRect(0, 0, 320, 80, 0xff00);
+  FillRect(0, 0, 320, 80, 0x41bf);
   //Se muestran los siguientes mensajes en la pantalla
   String text1 = "Proyecto Digital 2";
-  LCD_Print(text1, 10, 10, 2, 0xffff, 0x00);
+  LCD_Print(text1, 10, 10, 2, 0xfff0, 0xf04);
 
-  String text2 = "Sensor de temperatura";
-  LCD_Print(text2, 10, 40, 2, 0x00ff, 0x0f0f);
+  String text2 = "Temperatura";
+  LCD_Print(text2, 10, 40, 2, 0x004f, 0x0f0f);
   delay(5000);
 }
 //***************************************************************************************************************************************
@@ -97,6 +95,7 @@ void loop() {
   mandar = digitalRead(medir);
   memoria = digitalRead(guardar);
   //Condicional para pedir un dato del esp32
+  /*
   if(mandar == LOW){
     if(Serial2.available()){
       //Se guarda el dato
@@ -133,6 +132,9 @@ void loop() {
       Serial.println("Error al abrir el archivo");
     }
   }
+  */
+  int anim2 = (anim2 + 1)%8;
+  LCD_Sprite(30,100,21,63,termometro,8,anim2,0,1);
 }
 //***************************************************************************************************************************************
 // Función para inicializar LCD
