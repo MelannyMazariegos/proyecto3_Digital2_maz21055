@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <Wire.h>
+
 #define LM75_ADDRESS 0x4C
+#define SDA_PIN 21
+#define SCL_PIN 22
 
 void calcular(void);
 float temperatura;
@@ -8,7 +11,7 @@ float temperatura;
 void setup() {
   Serial.begin(115200);
   Serial2.begin(115200);
-  Wire.begin();
+  Wire.begin(SDA_PIN, SCL_PIN);
 }
 
 void loop() {
@@ -24,7 +27,7 @@ void loop() {
 void calcular(){
   // Solicitar temperatura al LM75
   Wire.beginTransmission(LM75_ADDRESS);
-  Wire.write(0); // Registro de temperatura (registro 0)
+  Wire.write(0x00); // Registro de temperatura (registro 0)
   Wire.endTransmission();
   
   delay(500); // Esperar para dar tiempo al LM75 para que realice la conversión
