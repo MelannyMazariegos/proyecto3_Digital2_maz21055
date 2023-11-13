@@ -1,18 +1,29 @@
 #include <Arduino.h>
 #include <Wire.h>
-
+#include<Adafruit_NeoPixel.h>
 #define LM75_ADDRESS 0x4C
-
+Adafruit_NeoPixel tira = Adafruit_NeoPixel(8, 15, NEO_GRB + NEO_KHZ800);
 void calcular(void);
 float temperatura;
 
 void setup() {
   Serial.begin(115200);
   Serial2.begin(115200);
+  tira.begin();
+  tira.show();
   Wire.begin();
 }
 
 void loop() {
+  tira.setBrightness(50);
+  for(int i = 0; i < 8; i++){
+    tira.setPixelColor(i, 200, 0, 100);
+    tira.show();
+    delay(50);
+    tira.setPixelColor(i, 0, 0, 0);
+    tira.show();
+  }
+  /*
    if (Serial2.available()){
     int com = Serial2.read();
     if (com == 'm'){
@@ -20,6 +31,7 @@ void loop() {
       Serial2.print(temperatura);
     }
   }
+  */
 }
 
 void calcular(){
