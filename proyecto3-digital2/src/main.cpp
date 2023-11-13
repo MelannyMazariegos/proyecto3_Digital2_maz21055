@@ -23,15 +23,16 @@ void loop() {
     tira.setPixelColor(i, 0, 0, 0);
     tira.show();
   }
-  /*
    if (Serial2.available()){
     int com = Serial2.read();
     if (com == 'm'){
       calcular();
       Serial2.print(temperatura);
     }
+    if (com == 'g'){
+      
+    }
   }
-  */
 }
 
 void calcular(){
