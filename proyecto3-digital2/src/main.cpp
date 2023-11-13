@@ -1,13 +1,27 @@
 #include <Arduino.h>
 #include <Wire.h>
 #define LM75_ADDRESS 0x4C
+
+void calcular(void);
+float temperatura;
+
 void setup() {
   Serial.begin(115200);
+  Serial2.begin(115200);
   Wire.begin();
-  //Serial2.begin(115200);
 }
 
 void loop() {
+  if (Serial2.available()){
+    int com = Serial2.read();
+    if (com == 'm'){
+      calcular();
+      Serial2.print(temperatura);
+    }
+  }
+}
+
+void calcular(){
   // Solicitar temperatura al LM75
   Wire.beginTransmission(LM75_ADDRESS);
   Wire.write(0); // Registro de temperatura (registro 0)
@@ -21,14 +35,12 @@ void loop() {
     int msb = Wire.read();
     int lsb = Wire.read();
 
-    // Calcular la temperatura en grados Celsius
-    int temp = ((msb << 8) | lsb) >> 7;
+    int rawTemperature = ((msb << 8) | lsb);
+    temperatura = (rawTemperature * 0.5) / 128.0;
     
     // Imprimir la temperatura
     Serial.print("Temperatura: ");
-    Serial.print(temp);
+    Serial.print(temperatura);
     Serial.println(" °C");
   }
-
-  delay(1000); // Esperar un segundo antes de la próxima lectura
 }

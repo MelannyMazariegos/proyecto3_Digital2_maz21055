@@ -61,8 +61,8 @@ int memoria; //Variable para el estado del boton 2
 void setup() {
   SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
   //Se inician los monitores seriales
-  Serial.begin(9600);
-  Serial2.begin(9600);
+  Serial.begin(115200);
+  Serial2.begin(115200);
   //Se declara el modulo para la SPI
   SPI.setModule(0);
   //Se inicializa la micro SD
