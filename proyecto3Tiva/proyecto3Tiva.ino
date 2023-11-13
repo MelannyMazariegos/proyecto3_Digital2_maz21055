@@ -50,7 +50,7 @@ extern uint8_t fondo[];
 const int guardar = PUSH2; //Pin del boton 2
 File myFile; //Variable para la micro SD
 const int medir = PUSH1; //Pin del boton 1
-int latido; //Variable para guardar el dato
+int grados; //Variable para guardar el dato
 int mandar; //Variable para el estado del boton 1
 int memoria; //Variable para el estado del boton 2
 //***************************************************************************************************************************************
@@ -97,21 +97,13 @@ void loop() {
   //Condicional para pedir un dato del esp32
   /*
   if(mandar == LOW){
+    Serial2.println('m');
     if(Serial2.available()){
       //Se guarda el dato
-      latido = Serial2.parseInt();
-      if(latido >0){
-        //Se manda el dato de regreso al esp32
-        Serial2.print("BPM: ");
-        Serial2.println(latido);
-        String text3 = "BPM: "; //Se declara para escribir en la pantalla
-        if(latido<100){
-          text3 += "0"; //Se agregan ceros para que siempre muestre 3 digitos
-        }
-        if(latido<10){
-          text3+= "0";
-        }
-        text3 += String(latido); //Se añade el dato al texto que anteriormente se declaro
+      grados = Serial2.parseFloat();
+      if(grados >0){
+        String text3 = "Temp: "; //Se declara para escribir en la pantalla
+        text3 += String(temp); //Se añade el dato al texto que anteriormente se declaro
         LCD_Print(text3, 120, 130, 2, 0x00ff, 0x0f0f);
       }
     }
@@ -119,11 +111,13 @@ void loop() {
   //Condicional para guardar el dato en la micro SD
   if(memoria == LOW){
     //Se abre el archivo 
-    myFile = SD.open("pulso.txt", FILE_WRITE);
+    myFile = SD.open("grado.txt", FILE_WRITE);
     //Si se abre el archivo se guarda en la micro SD
     if (myFile){
-      myFile.print("BPM: ");
-      myFile.println(latido);
+      myFile.print("Temperatura: ");
+      myFile.print(grados);
+      myFile.println(" C");
+      Serial2.print('g');
       myFile.close(); //Se cierra el documento
       Serial.println("Dato recibido");
     }
