@@ -5,6 +5,7 @@
 Adafruit_NeoPixel tira = Adafruit_NeoPixel(8, 15, NEO_GRB + NEO_KHZ800);
 void calcular(void);
 void medicion(void);
+void tarjeta(void);
 float temperatura;
 unsigned long tiempoPrevio = 0;  // Almacena el tiempo del último evento
 const int intervalo = 10000;      // Intervalo de tiempo en milisegundos (10 segundos)
@@ -36,6 +37,9 @@ void loop() {
     if (comando == "1"){
       medicion();
     }
+    else if (comando == "2"){
+      tarjeta();
+    }
     String mensaje = Serial2.readStringUntil('\n');
     Serial.println(mensaje); //Se imprime el dato en el monitor serial
   }
@@ -63,9 +67,18 @@ void calcular(){
 }
 void medicion(){
   for(int i = 0; i < 8; i++){
-    tira.setPixelColor(i, 200, 150, 100);
+    tira.setPixelColor(i, 50, 150, 100);
     tira.show();
-    delay(50);
+    delay(100);
+    tira.setPixelColor(i, 0, 0, 0);
+    tira.show();
+  }
+}
+void tarjeta(){
+  for(int i = 0; i < 8; i++){
+    tira.setPixelColor(i, 150, 200, 0);
+    tira.show();
+    delay(100);
     tira.setPixelColor(i, 0, 0, 0);
     tira.show();
   }

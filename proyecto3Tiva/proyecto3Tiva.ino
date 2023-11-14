@@ -137,6 +137,7 @@ void loop() {
       myFile.println(" C");
       myFile.close(); //Se cierra el documento
       Serial.println("Dato recibido");
+      Serial2.write('2');
     }
     else{
       //Muestra este mensaje si no se abrio el archivo de manera correcta
