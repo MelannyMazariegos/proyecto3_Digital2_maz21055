@@ -44,15 +44,18 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
 
 void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
 void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
-extern uint8_t fondo[];
+extern uint8_t calor[];
+extern uint8_t termometro[];
 #define RXp2 PD6 //Pines para la comunicacion entre esp32 y Tiva C
 #define TXp2 PD7
 const int guardar = PUSH2; //Pin del boton 2
 File myFile; //Variable para la micro SD
 const int medir = PUSH1; //Pin del boton 1
-int grados; //Variable para guardar el dato
+float grados; //Variable para guardar el dato
 int mandar; //Variable para el estado del boton 1
 int memoria; //Variable para el estado del boton 2
+int anim2 = 0;
+int senal=0;
 //***************************************************************************************************************************************
 // Inicialización
 //***************************************************************************************************************************************
@@ -64,12 +67,12 @@ void setup() {
   //Se declara el modulo para la SPI
   SPI.setModule(0);
   //Se inicializa la micro SD
-//  Serial.print("Initializing SD card...");
-//  if (!SD.begin(38)) {
+  Serial.print("Initializing SD card...");
+  if (!SD.begin(38)) {
     //Si falla se muestra este mensaje
-//    Serial.println("initialization failed!");
-//    return;
-//  }
+    Serial.println("initialization failed!");
+    return;
+  }
   //Si es exitosa se muestra este mensaje
   Serial.println("initialization done.");
   //Se declaran las salidas y entradas
@@ -95,29 +98,43 @@ void loop() {
   mandar = digitalRead(medir);
   memoria = digitalRead(guardar);
   //Condicional para pedir un dato del esp32
-  /*
+  
   if(mandar == LOW){
-    Serial2.println('m');
     if(Serial2.available()){
-      //Se guarda el dato
       grados = Serial2.parseFloat();
-      if(grados >0){
-        String text3 = "Temp: "; //Se declara para escribir en la pantalla
-        text3 += String(temp); //Se añade el dato al texto que anteriormente se declaro
-        LCD_Print(text3, 120, 130, 2, 0x00ff, 0x0f0f);
+      if(grados>0.00){
+        //Se guarda el dato
+        Serial2.write('1');
+        Serial.println(grados);
+        Serial2.print("Temperatura: ");
+        Serial2.print(grados);
+        Serial2.println(" °C");
+        delay(100);
+        String text3 = "Temp:"; //Se declara para escribir en la pantalla
+        LCD_Print(text3, 110, 170, 2, 0x00ff, 0x0f0f);
+        int entero = static_cast<int>(grados);
+        int decimal = static_cast<int>((grados-entero)*100);
+        LCD_Print(String(entero), 190, 170, 2, 0x00ff, 0x0f0f);
+        LCD_Print(".", 220, 170, 2, 0x00ff, 0x0f0f);
+        LCD_Print(String(decimal), 230, 170, 2, 0x00ff, 0x0f0f);
+        if(grados>24.45){
+          LCD_Bitmap(150, 100, 64, 64, fuego);
+        }
+        else{
+          LCD_Bitmap(150, 100, 64, 64, cara);
+        }
       }
     }
   }
   //Condicional para guardar el dato en la micro SD
   if(memoria == LOW){
     //Se abre el archivo 
-    myFile = SD.open("grado.txt", FILE_WRITE);
+    myFile = SD.open("temp.txt", FILE_WRITE);
     //Si se abre el archivo se guarda en la micro SD
     if (myFile){
       myFile.print("Temperatura: ");
       myFile.print(grados);
       myFile.println(" C");
-      Serial2.print('g');
       myFile.close(); //Se cierra el documento
       Serial.println("Dato recibido");
     }
@@ -126,9 +143,8 @@ void loop() {
       Serial.println("Error al abrir el archivo");
     }
   }
-  */
-  int anim2 = (anim2 + 1)%8;
-  LCD_Sprite(30,100,21,63,termometro,8,anim2,0,1);
+  LCD_Sprite(30,100,34,80,termometro,4,anim2,0,1);
+  anim2 = (anim2 + 1)%4;
 }
 //***************************************************************************************************************************************
 // Función para inicializar LCD

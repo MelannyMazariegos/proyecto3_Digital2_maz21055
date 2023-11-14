@@ -1,11 +1,13 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include<Adafruit_NeoPixel.h>
-#define LM75_ADDRESS 0x4C
+#define LM75_ADDRESS 0x48
 Adafruit_NeoPixel tira = Adafruit_NeoPixel(8, 15, NEO_GRB + NEO_KHZ800);
 void calcular(void);
 float temperatura;
-
+unsigned long tiempoPrevio = 0;  // Almacena el tiempo del último evento
+const int intervalo = 10000;      // Intervalo de tiempo en milisegundos (10 segundos)
+int com=0;
 void setup() {
   Serial.begin(115200);
   Serial2.begin(115200);
@@ -15,24 +17,29 @@ void setup() {
 }
 
 void loop() {
-  tira.setBrightness(50);
-  for(int i = 0; i < 8; i++){
-    tira.setPixelColor(i, 200, 0, 100);
-    tira.show();
-    delay(50);
-    tira.setPixelColor(i, 0, 0, 0);
-    tira.show();
+//  tira.setBrightness(50);
+  //for(int i = 0; i < 8; i++){
+//    tira.setPixelColor(i, 200, 0, 100);
+  //  tira.show();
+    //delay(50);
+    //tira.setPixelColor(i, 0, 0, 0);
+  //  tira.show();
+//  }
+  //Obtener el tiempo actual
+  unsigned long tiempoActual = millis();
+  calcular();
+  // Verificar si ha pasado el intervalo de tiempo
+  if (tiempoActual - tiempoPrevio >= intervalo) {
+    Serial2.println(temperatura);
+    // Actualizar el tiempo del último evento
+    tiempoPrevio = tiempoActual;
   }
-   if (Serial2.available()){
-    int com = Serial2.read();
-    if (com == 'm'){
-      calcular();
-      Serial2.print(temperatura);
-    }
-    if (com == 'g'){
-      
-    }
+  while (Serial2.available()){
+    char com = Serial2.read();
+    String mensaje = Serial2.readStringUntil('\n');
+    Serial.println(mensaje); //Se imprime el dato en el monitor serial
   }
+  
 }
 
 void calcular(){
@@ -51,10 +58,6 @@ void calcular(){
 
     int rawTemperature = ((msb << 8) | lsb);
     temperatura = (rawTemperature * 0.5) / 128.0;
-    
-    // Imprimir la temperatura
-    Serial.print("Temperatura: ");
-    Serial.print(temperatura);
-    Serial.println(" °C");
   }
+  delay(500);
 }
