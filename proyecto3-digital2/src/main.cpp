@@ -4,6 +4,7 @@
 #define LM75_ADDRESS 0x48
 Adafruit_NeoPixel tira = Adafruit_NeoPixel(8, 15, NEO_GRB + NEO_KHZ800);
 void calcular(void);
+void medicion(void);
 float temperatura;
 unsigned long tiempoPrevio = 0;  // Almacena el tiempo del último evento
 const int intervalo = 10000;      // Intervalo de tiempo en milisegundos (10 segundos)
@@ -17,14 +18,9 @@ void setup() {
 }
 
 void loop() {
-//  tira.setBrightness(50);
-  //for(int i = 0; i < 8; i++){
-//    tira.setPixelColor(i, 200, 0, 100);
-  //  tira.show();
-    //delay(50);
-    //tira.setPixelColor(i, 0, 0, 0);
-  //  tira.show();
-//  }
+  tira.setBrightness(50);
+  tira.setPixelColor(0, 200, 0, 100);
+  tira.show();
   //Obtener el tiempo actual
   unsigned long tiempoActual = millis();
   calcular();
@@ -36,6 +32,10 @@ void loop() {
   }
   while (Serial2.available()){
     char com = Serial2.read();
+    String comando = String(com);
+    if (comando == "1"){
+      medicion();
+    }
     String mensaje = Serial2.readStringUntil('\n');
     Serial.println(mensaje); //Se imprime el dato en el monitor serial
   }
@@ -61,3 +61,14 @@ void calcular(){
   }
   delay(500);
 }
+void medicion(){
+  for(int i = 0; i < 8; i++){
+    tira.setPixelColor(i, 200, 150, 100);
+    tira.show();
+    delay(50);
+    tira.setPixelColor(i, 0, 0, 0);
+    tira.show();
+  }
+}
+
+

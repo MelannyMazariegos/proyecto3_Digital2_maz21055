@@ -142,6 +142,7 @@ void loop() {
       //Muestra este mensaje si no se abrio el archivo de manera correcta
       Serial.println("Error al abrir el archivo");
     }
+    delay(100);
   }
   LCD_Sprite(30,100,34,80,termometro,4,anim2,0,1);
   anim2 = (anim2 + 1)%4;
