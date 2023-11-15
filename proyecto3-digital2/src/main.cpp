@@ -74,6 +74,7 @@ void calcular(){
 }
 void medicion(){
   for(int i = 0; i < 8; i++){
+    //Secuencia de leds para cuando se manda un dato
     tira.setPixelColor(i, 50, 150, 100);
     tira.show();
     delay(100);
@@ -82,6 +83,7 @@ void medicion(){
   }
 }
 void tarjeta(){
+  //Secuencia de leds para cuando se guarda un dato
   for(int i = 0; i < 8; i++){
     tira.setPixelColor(i, 150, 200, 0);
     tira.show();

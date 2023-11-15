@@ -44,8 +44,7 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
 
 void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
 void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
-extern uint8_t calor[];
-extern uint8_t termometro[];
+extern uint8_t termometro[]; //Imagen del termometro
 #define RXp2 PD6 //Pines para la comunicacion entre esp32 y Tiva C
 #define TXp2 PD7
 const int guardar = PUSH2; //Pin del boton 2
@@ -54,8 +53,8 @@ const int medir = PUSH1; //Pin del boton 1
 float grados; //Variable para guardar el dato
 int mandar; //Variable para el estado del boton 1
 int memoria; //Variable para el estado del boton 2
-int anim2 = 0;
-int senal=0;
+int anim2 = 0; //Variable para la animacion
+int senal=0; 
 //***************************************************************************************************************************************
 // Inicialización
 //***************************************************************************************************************************************
@@ -75,7 +74,7 @@ void setup() {
   }
   //Si es exitosa se muestra este mensaje
   Serial.println("initialization done.");
-  //Se declaran las salidas y entradas
+  //Se declaran las entradas
   pinMode(guardar, INPUT_PULLUP);
   pinMode(medir, INPUT_PULLUP);
   //Configuracion de la pantalla TFT
@@ -101,26 +100,31 @@ void loop() {
   
   if(mandar == LOW){
     if(Serial2.available()){
+      //Se guarda el dato
       grados = Serial2.parseFloat();
       if(grados>0.00){
-        //Se guarda el dato
+        //Se manda el comando para el neopixel
         Serial2.write('1');
         Serial.println(grados);
+        //Se manda la temperatura al esp32
         Serial2.print("Temperatura: ");
         Serial2.print(grados);
         Serial2.println(" °C");
         delay(100);
         String text3 = "Temp:"; //Se declara para escribir en la pantalla
         LCD_Print(text3, 110, 170, 2, 0x00ff, 0x0f0f);
+        //Se parte el flotante para imprimir en la pantalla
         int entero = static_cast<int>(grados);
         int decimal = static_cast<int>((grados-entero)*100);
         LCD_Print(String(entero), 190, 170, 2, 0x00ff, 0x0f0f);
         LCD_Print(".", 220, 170, 2, 0x00ff, 0x0f0f);
         LCD_Print(String(decimal), 230, 170, 2, 0x00ff, 0x0f0f);
         if(grados>24.45){
+          //Se imprime la imagen de una llama de fuego
           LCD_Bitmap(150, 100, 64, 64, fuego);
         }
         else{
+          //Se imprime una cara feliz
           LCD_Bitmap(150, 100, 64, 64, cara);
         }
       }
@@ -137,7 +141,7 @@ void loop() {
       myFile.println(" C");
       myFile.close(); //Se cierra el documento
       Serial.println("Dato recibido");
-      Serial2.write('2');
+      Serial2.write('2'); //Se manda el comando para el neopixel
     }
     else{
       //Muestra este mensaje si no se abrio el archivo de manera correcta
@@ -145,8 +149,9 @@ void loop() {
     }
     delay(100);
   }
+  //Se imprime la animacion de un termometro
   LCD_Sprite(30,100,34,80,termometro,4,anim2,0,1);
-  anim2 = (anim2 + 1)%4;
+  anim2 = (anim2 + 1)%4; //Se queda en un solo lugar
 }
 //***************************************************************************************************************************************
 // Función para inicializar LCD
